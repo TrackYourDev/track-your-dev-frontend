@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Analytics } from "@vercel/analytics/next"
 import Clarity from '@microsoft/clarity'
@@ -37,7 +37,7 @@ export default function RootLayout({
 }) {
   Clarity.init('rvr9r43lu1');
   const pathname = usePathname();
-  const isDashboard = pathname === '/dashboard';
+  const isDashboard = pathname.startsWith('/dashboard');
   const isDemo = pathname === '/demo';
 
   return (
