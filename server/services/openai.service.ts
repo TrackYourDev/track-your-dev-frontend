@@ -63,7 +63,7 @@ IMPORTANT:
                 }
             ],
             temperature: 0.7,
-            max_tokens: 2048,
+            max_tokens: Number(process.env.OPENAI_MAX_TOKENS) || 8192,
             top_p: 1,
         });
 
@@ -155,7 +155,7 @@ IMPORTANT:
                 }
             ],
             temperature: 0.7,
-            max_tokens: 2048,
+            max_tokens: Number(process.env.OPENAI_MAX_TOKENS) || 8192,
             top_p: 1,
         });
 

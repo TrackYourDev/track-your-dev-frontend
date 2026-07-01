@@ -63,7 +63,7 @@ IMPORTANT:
             ],
             model: "llama-3.3-70b-versatile",
             temperature: 0.7,
-            max_completion_tokens: 2048,
+            max_completion_tokens: Number(process.env.GROQ_MAX_TOKENS) || 8192,
             top_p: 1,
             stream: false
         });
@@ -157,7 +157,7 @@ IMPORTANT:
             ],
             model: "llama-3.3-70b-versatile",
             temperature: 0.7,
-            max_completion_tokens: 2048,
+            max_completion_tokens: Number(process.env.GROQ_MAX_TOKENS) || 8192,
             top_p: 1,
             stream: false
         });
