@@ -1,0 +1,19 @@
+import { Schema, model, models, Model } from 'mongoose';
+import { IRepository } from '../types';
+
+const RepositorySchema = new Schema<IRepository>({
+  repoId: { type: Number, required: true, unique: true },
+  name: { type: String, required: true },
+  fullName: { type: String, required: true },
+  private: { type: Boolean, required: true },
+  owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  defaultBranch: { type: String, required: true },
+  createdAt: { type: Date, required: true },
+  updatedAt: { type: Date, required: true },
+  organization: { type: Schema.Types.ObjectId, ref: 'Organization' },
+  enabledForTasks: { type: Boolean, default: true },
+});
+
+export const Repository: Model<IRepository> =
+  (models.Repository as Model<IRepository>) ||
+  model<IRepository>('Repository', RepositorySchema);

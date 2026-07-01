@@ -30,6 +30,10 @@ export async function GET(request: NextRequest) {
         client_id: process.env.GITHUB_CLIENT_ID,
         client_secret: process.env.GITHUB_CLIENT_SECRET,
         code: code,
+        // Must match the redirect_uri used in the authorize step (lib/auth.ts).
+        redirect_uri:
+          process.env.GITHUB_REDIRECT_URI ||
+          `${new URL(request.url).origin}/api/auth/github/callback`,
       }),
     });
 
@@ -51,24 +55,26 @@ export async function GET(request: NextRequest) {
 
     // Store user session (example with cookies)
     const response = NextResponse.redirect(new URL('https://github.com/apps/trackyourdev/installations/new', request.url));
-    
-    // Set secure HTTP-only cookie
-    response.cookies.set('github_token', tokenData.access_token, {
+
+    // Cookie scope is environment-driven so login works on any domain:
+    //  - Set AUTH_COOKIE_DOMAIN (e.g. ".trackyour.dev") to share the cookie across
+    //    subdomains in production.
+    //  - Leave it unset (e.g. on localhost) for a host-only cookie.
+    // SameSite=None requires Secure (https only), so fall back to Lax on http.
+    const isProd = process.env.NODE_ENV === 'production';
+    const cookieDomain = process.env.AUTH_COOKIE_DOMAIN;
+    const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none', // ⚠️ if cookies must be used cross-site (across subdomains)
-      domain: '.trackyour.dev', // 👈 critical addition
+      secure: isProd,
+      sameSite: (isProd ? 'none' : 'lax') as 'none' | 'lax',
+      ...(cookieDomain ? { domain: cookieDomain } : {}),
       maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-    
-    response.cookies.set('user_id', userData.id.toString(), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
-      domain: '.trackyour.dev',
-      maxAge: 60 * 60 * 24 * 7,
-    });
-    
+      path: '/',
+    };
+
+    response.cookies.set('github_token', tokenData.access_token, cookieOptions);
+    response.cookies.set('user_id', userData.id.toString(), cookieOptions);
+
     // Return the response with redirect
     return response;
 

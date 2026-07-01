@@ -7,6 +7,7 @@ import { ChevronDown, ArrowRight, Play, Github, MessageCircle } from "lucide-rea
 import Typewriter from 'typewriter-effect';
 import { AppStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
+import { startGithubLogin } from "@/lib/auth";
 
 export function HeroSection() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -79,7 +80,7 @@ export function HeroSection() {
               if (isAuthenticated) {
                 router.push('/dashboard');
               } else {
-                window.open(`https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&scope=user:email&state=abc`, "_self");
+                startGithubLogin();
               }
             }} size="lg" className="text-lg group">
               <Github className="mr-2 h-5 w-5" />

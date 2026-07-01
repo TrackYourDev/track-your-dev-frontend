@@ -14,6 +14,7 @@ import {
 import { LogoPng } from "./ui/logo-png";
 import { AppStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
+import { startGithubLogin } from "@/lib/auth";
 
 const navItems = [
   { name: "Discord", href: "https://discord.gg/rtGrJ2n2Gz" },
@@ -71,7 +72,7 @@ export function Header() {
               Open app
             </Button>
           ) : (
-            <Button variant="outline" className="bg-white text-black">
+            <Button variant="outline" className="bg-white text-black" onClick={startGithubLogin}>
               Login
             </Button>
           )}
@@ -93,7 +94,14 @@ export function Header() {
                     {item.name}
                   </Link>
                 ))}
-                <Button className="mt-4">Sign In</Button>
+                <Button
+                  className="mt-4"
+                  onClick={() =>
+                    isAuthenticated ? router.push("/dashboard") : startGithubLogin()
+                  }
+                >
+                  {isAuthenticated ? "Open app" : "Sign In"}
+                </Button>
               </nav>
             </SheetContent>
           </Sheet>
