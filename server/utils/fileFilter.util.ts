@@ -92,5 +92,9 @@ export function shouldIgnoreFile(filename: string): boolean {
  * @returns Filtered array of files
  */
 export function filterIgnoredFiles<T extends { filename: string }>(files: T[]): T[] {
+  // GitHub's compare/commits response can omit `files` (e.g. a root commit with no
+  // parent, or a diff too large for the API). Treat a missing/non-array value as
+  // empty so callers skip the commit cleanly instead of throwing on `.filter`.
+  if (!Array.isArray(files)) return [];
   return files.filter(file => !shouldIgnoreFile(file.filename));
 }
